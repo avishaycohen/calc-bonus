@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחשבון תגמול מיוחד ונוסף</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .radio-group {
+            margin-right: 20px;
+            display: none;
+        }
+        .radio-group.show {
+            display: block;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="checkbox"],
+        input[type="radio"] {
+            margin-left: 5px;
+        }
+        input[type="date"] {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            direction: ltr;
+        }
+        .radio-option {
+            margin-right: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .submit-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+        .result-container {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            display: none;
+        }
+        .result-container.show {
+            display: block;
+        }
+        .date-range {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            position: relative;
+        }
+        .remove-date {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .remove-date:hover {
+            background-color: #cc0000;
+        }
+        .add-date-button {
+            background-color: #2196F3;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .add-date-button:hover {
+            background-color: #1976D2;
+        }
+        .disclaimer {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="disclaimer">
+            <strong>הערה חשובה:</strong><br>
+            מחשבון זה פועל באופן מקומי במכשיר המשתמש בלבד, אינו שולח או שומר מידע כלשהו, ועלול להכיל שגיאות או בעיות. המחשבון מבוסס על הסבר התגמול הרשמי ואינו קשור או מייצג את צה"ל.
+        </div>
+        <h1>מחשבון תגמול מיוחד ונוסף</h1>
+        <form id="bonusForm">
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="isCommander" name="isCommander">
+                    מפקד מילואים?
+                </label>
+                <div class="radio-group" id="commanderOptions">
+                    <div class="radio-option">
+                        <input type="radio" id="levelA" name="commanderLevel" value="א">
+                        <label for="levelA">רמה א</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="levelAPlus" name="commanderLevel" value="א+">
+                        <label for="levelAPlus">רמה א+</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="air" name="commanderLevel" value="צוות אוויר">
+                        <label for="air">צוות אוויר</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="sea" name="commanderLevel" value="צוות ים">
+                        <label for="sea">צוות ים</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="other" name="commanderLevel" value="אחר">
+                        <label for="other">אף אחד מהנ"ל</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="ageExt" name="ageExt">
+                    מוחרג גיל
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="ageLength" name="ageLength">
+                    משרת שהוארך שירותו מטעמי גיל
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="previousPayment" name="previousPayment">
+                    שולם לי תגמול מיוחד ב-1/5/2024 עבור ימי מילואים עד ה- 31/3/2024
+                </label>
+            </div>
+
+            <div class="form-group">
+                <button type="button" class="add-date-button" onclick="addDateRange()">הוסף טווח תאריכים</button>
+                <div id="dateRanges">
+                    <div class="date-range">
+                        <button type="button" class="remove-date" onclick="removeDateRange(this)">הסר</button>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="order8_1" name="order8">
+                                צו 8
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="startDate1">תאריך התחלה:</label>
+                            <input type="date" id="startDate1" name="startDate" value="2023-10-07" min="2023-10-07" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate1">תאריך סיום:</label>
+                            <input type="date" id="endDate1" name="endDate" value="2024-12-31" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-button">חשב תגמול</button>
+        </form>
+
+        <div id="resultContainer" class="result-container">
+            <h2>תוצאה:</h2>
+            <p id="resultText"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('isCommander').addEventListener('change', function() {
+            const radioGroup = document.getElementById('commanderOptions');
+            if (this.checked) {
+                radioGroup.classList.add('show');
+            } else {
+                radioGroup.classList.remove('show');
+            }
+        });
+
+        document.getElementById('bonusForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateBonus();
+        });
+
+        function addDateRange() {
+            const dateRanges = document.getElementById('dateRanges');
+            const newRange = document.createElement('div');
+            newRange.className = 'date-range';
+            
+            const rangeCount = dateRanges.children.length + 1;
+            
+            newRange.innerHTML = `
+                <button type="button" class="remove-date" onclick="removeDateRange(this)">הסר</button>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="order8_${rangeCount}" name="order8">
+                        צו 8
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="startDate${rangeCount}">תאריך התחלה:</label>
+                    <input type="date" id="startDate${rangeCount}" name="startDate" value="2023-10-07" min="2023-10-07" required>
+                </div>
+                <div class="form-group">
+                    <label for="endDate${rangeCount}">תאריך סיום:</label>
+                    <input type="date" id="endDate${rangeCount}" name="endDate" value="2024-12-31" required>
+                </div>
+            `;
+            
+            dateRanges.appendChild(newRange);
+        }
+
+        function removeDateRange(button) {
+            const dateRange = button.parentElement;
+            const dateRanges = document.getElementById('dateRanges');
+            
+            if (dateRanges.children.length > 1) {
+                dateRange.remove();
+            } else {
+                alert('לא ניתן להסיר את טווח התאריכים האחרון');
+            }
+        }
+
+        function calculateBonus() {
+            const isCommander = document.getElementById('isCommander').checked;
+            const commanderLevel = isCommander ? document.querySelector('input[name="commanderLevel"]:checked')?.value : null;
+            const ageExt = document.getElementById('ageExt').checked;
+            const ageLength = document.getElementById('ageLength').checked;
+            
+            // Get all date ranges
+            const dateRanges = [];
+            const startDates = document.querySelectorAll('input[name="startDate"]');
+            const endDates = document.querySelectorAll('input[name="endDate"]');
+            const order8Checkboxes = document.querySelectorAll('input[name="order8"]');
+            
+            for (let i = 0; i < startDates.length; i++) {
+                dateRanges.push({
+                    start: startDates[i].value,
+                    end: endDates[i].value,
+                    isOrder8: order8Checkboxes[i].checked
+                });
+            }
+
+            // Calculate total days
+            let totalDays = 0;
+            let order8Days = 0;
+            let nonOrder8Days = 0;
+            const year2024End = new Date('2024-12-31');
+            dateRanges.forEach(range => {
+                const start = new Date(range.start);
+                let end = new Date(range.end);
+                // Cap end date at December 31st, 2024
+                if (end > year2024End) {
+                    end = year2024End;
+                }
+                const diffTime = Math.abs(end - start);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                totalDays += diffDays;
+                if (range.isOrder8) {
+                    order8Days += diffDays;
+                } else {
+                    nonOrder8Days += diffDays;
+                }
+            });
+
+            // Create result string
+            let result = "סיכום הפרטים שהוזנו:<br>";
+            result += `מפקד מילואים: ${isCommander ? 'כן' : 'לא'}<br>`;
+            if (isCommander) {
+                result += `רמת פיקוד: ${commanderLevel}<br>`;
+            }
+            result += `גיל הארכה: ${ageExt ? 'כן' : 'לא'}<br>`;
+            result += `גיל אורך: ${ageLength ? 'כן' : 'לא'}<br><br>`;
+            result += "טווחי תאריכים:<br>";
+            
+            dateRanges.forEach((range, index) => {
+                result += `טווח ${index + 1}: ${range.start} - ${range.end}${range.isOrder8 ? ' (צו 8)' : ''}<br>`;
+            });
+
+            result += `<br>סה"כ ימים: ${totalDays}<br>`;
+            result += `מתוכם ימי צו 8: ${order8Days}<br>`;
+            result += `ימים שאינם צו 8: ${nonOrder8Days}<br><br>`;
+            result += "תוצאה:<br>";
+
+            // Determine bonus based on total days
+            let totalBonus = 0;
+            if (totalDays < 10) {
+                result += "לא זכאי לתגמול נוסף,דרושים מינימום 10 ימים של שרות מילואים פעיל";
+            } else if (totalDays <= 14.5) {
+                totalBonus += 1452;
+                result += "תגמול נוסף של 1,452 שקלים בתאריך 8/4/2025";
+            } else if (totalDays <= 19.5) {
+                totalBonus += 2904;
+                result += "תגמול נוסף של 2,904 שקלים בתאריך 8/4/2025";
+            } else if (totalDays <= 36.5) {
+                totalBonus += 4356;
+                result += "תגמול נוסף של 4,356 שקלים בתאריך 8/4/2025";
+            } else {
+                totalBonus += 5808;
+                result += "תגמול נוסף של 5,808 שקלים בתאריך 8/4/2025";
+            }
+
+            // Calculate special bonus for days beyond 32
+            if (totalDays > 32) {
+                const extraDays = Math.min(totalDays - 32, 28); // Cap at 60 days (32 + 28)
+                const fullDays = Math.floor(extraDays);
+                const halfDays = extraDays % 1 !== 0 ? 1 : 0;
+                const specialBonus = (fullDays * 133.33) + (halfDays * 66.66);
+                totalBonus += specialBonus;
+                
+                result += `<br><br>תגמול מיוחד בגובה ${specialBonus.toFixed(2)} שקלים ישולם בתאריך 7/4/2025`;
+            }
+
+            // Calculate bonus for days above 60
+            if (totalDays > 60) {
+                const isCommanderWithSpecialLevel = isCommander && commanderLevel !== 'אחר';
+                const previousPayment = document.getElementById('previousPayment').checked;
+                const isAgeExt = document.getElementById('ageExt').checked;
+                const daysToUse = isCommanderWithSpecialLevel ? totalDays : order8Days;
+                
+                if (daysToUse > 60) {
+                    let extraDays = daysToUse - 60;
+                    
+                    // If previous payment is checked, limit calculation to days between 1/4/2024 and 31/12/2024
+                    if (previousPayment) {
+                        const limitStart = new Date('2024-04-01');
+                        const limitEnd = new Date('2024-12-31');
+                        let limitedDays = 0;
+                        
+                        dateRanges.forEach(range => {
+                            const start = new Date(range.start);
+                            const end = new Date(range.end);
+                            
+                            // Only count days that fall within the limit period
+                            if (start <= limitEnd && end >= limitStart) {
+                                const effectiveStart = start > limitStart ? start : limitStart;
+                                const effectiveEnd = end < limitEnd ? end : limitEnd;
+                                const diffTime = Math.abs(effectiveEnd - effectiveStart);
+                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                
+                                if (isCommanderWithSpecialLevel) {
+                                    limitedDays += diffDays;
+                                } else if (range.isOrder8) {
+                                    limitedDays += diffDays;
+                                }
+                            }
+                        });
+                        
+                        extraDays = Math.max(0, limitedDays - 60);
+                    }
+                    
+                    if (extraDays > 0) {
+                        const fullDays = Math.floor(extraDays);
+                        const halfDays = extraDays % 1 !== 0 ? 1 : 0;
+                        const above60Bonus = (fullDays * 133.33) + (halfDays * 66.66);
+                        totalBonus += above60Bonus;
+                        
+                        result += `<br><br>תגמול ימים מעל 60 בגובה ${above60Bonus.toFixed(2)} שקלים ישולם בתאריך 7/4/2025`;
+                    }
+                }
+            }
+
+            // Calculate special bonus for מוחרג גיל users
+            if (ageExt) {
+                const year2024Start = new Date('2024-01-01');
+                const year2024End = new Date('2024-12-31');
+                let daysIn2024 = 0;
+                
+                dateRanges.forEach(range => {
+                    const start = new Date(range.start);
+                    const end = new Date(range.end);
+                    
+                    if (start <= year2024End && end >= year2024Start) {
+                        const effectiveStart = start > year2024Start ? start : year2024Start;
+                        const effectiveEnd = end < year2024End ? end : year2024End;
+                        const diffTime = Math.abs(effectiveEnd - effectiveStart);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        daysIn2024 += diffDays;
+                    }
+                });
+
+                if (daysIn2024 > 0) {
+                    const fullDays = Math.floor(daysIn2024);
+                    const halfDays = daysIn2024 % 1 !== 0 ? 1 : 0;
+                    const ageExtBonus = (fullDays * 133.33) + (halfDays * 66.66);
+                    totalBonus += ageExtBonus;
+                    
+                    result += `<br><br>תגמול מיוחד למוחרג גיל בגובה ${ageExtBonus.toFixed(2)} שקלים ישולם בתאריך 7/4/2025`;
+                }
+            }
+
+            // Calculate special bonus for משרת שהוארך שירותו מטעמי גיל users
+            if (ageLength) {
+                const year2024Start = new Date('2024-01-01');
+                const year2024End = new Date('2024-12-31');
+                let daysIn2024 = 0;
+                
+                dateRanges.forEach(range => {
+                    const start = new Date(range.start);
+                    const end = new Date(range.end);
+                    
+                    if (start <= year2024End && end >= year2024Start) {
+                        const effectiveStart = start > year2024Start ? start : year2024Start;
+                        const effectiveEnd = end < year2024End ? end : year2024End;
+                        const diffTime = Math.abs(effectiveEnd - effectiveStart);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        daysIn2024 += diffDays;
+                    }
+                });
+
+                const maxDays = Math.min(daysIn2024, 31);
+                const fullDays = Math.floor(maxDays);
+                const halfDays = maxDays % 1 !== 0 ? 1 : 0;
+                const ageLengthBonus = (fullDays * 133.33) + (halfDays * 66.66);
+                totalBonus += ageLengthBonus;
+                
+                result += `<br><br>תגמול מיוחד למשרת שהוארך שירותו בגובה ${ageLengthBonus.toFixed(2)} שקלים ישולם בתאריך 7/4/2025`;
+            }
+
+            // Add total amount
+            if (totalBonus > 0) {
+                result += `<br><br><strong>סה"כ תגמול: ${totalBonus.toFixed(2)} שקלים</strong>`;
+            }
+
+            // Display the result
+            const resultContainer = document.getElementById('resultContainer');
+            const resultText = document.getElementById('resultText');
+            resultText.innerHTML = result;
+            resultContainer.classList.add('show');
+        }
+    </script>
+</body>
+</html>
