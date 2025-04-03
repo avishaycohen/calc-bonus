@@ -117,6 +117,11 @@
             font-size: 14px;
             line-height: 1.5;
         }
+        .date-display {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -191,10 +196,12 @@
                         <div class="form-group">
                             <label for="startDate1">תאריך התחלה:</label>
                             <input type="date" id="startDate1" name="startDate" value="2023-10-07" min="2023-10-07" required>
+                            <div class="date-display" id="startDate1Display"></div>
                         </div>
                         <div class="form-group">
                             <label for="endDate1">תאריך סיום:</label>
                             <input type="date" id="endDate1" name="endDate" value="2024-12-31" required>
+                            <div class="date-display" id="endDate1Display"></div>
                         </div>
                     </div>
                 </div>
@@ -210,6 +217,30 @@
     </div>
 
     <script>
+        // Add date formatting functions
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        function updateDateDisplay(inputId, displayId) {
+            const input = document.getElementById(inputId);
+            const display = document.getElementById(displayId);
+            if (input && display) {
+                display.textContent = formatDate(input.value);
+                input.addEventListener('change', function() {
+                    display.textContent = formatDate(this.value);
+                });
+            }
+        }
+
+        // Update initial date displays
+        updateDateDisplay('startDate1', 'startDate1Display');
+        updateDateDisplay('endDate1', 'endDate1Display');
+
         document.getElementById('isCommander').addEventListener('change', function() {
             const radioGroup = document.getElementById('commanderOptions');
             if (this.checked) {
@@ -242,14 +273,20 @@
                 <div class="form-group">
                     <label for="startDate${rangeCount}">תאריך התחלה:</label>
                     <input type="date" id="startDate${rangeCount}" name="startDate" value="2023-10-07" min="2023-10-07" required>
+                    <div class="date-display" id="startDate${rangeCount}Display"></div>
                 </div>
                 <div class="form-group">
                     <label for="endDate${rangeCount}">תאריך סיום:</label>
                     <input type="date" id="endDate${rangeCount}" name="endDate" value="2024-12-31" required>
+                    <div class="date-display" id="endDate${rangeCount}Display"></div>
                 </div>
             `;
             
             dateRanges.appendChild(newRange);
+            
+            // Update date displays for new range
+            updateDateDisplay(`startDate${rangeCount}`, `startDate${rangeCount}Display`);
+            updateDateDisplay(`endDate${rangeCount}`, `endDate${rangeCount}Display`);
         }
 
         function removeDateRange(button) {
